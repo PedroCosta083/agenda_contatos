@@ -8,4 +8,8 @@ class Categoria extends Model
 {
     protected $hidden = [];
     protected $appends = [];
+
+    public function contatoRelationship(){
+         return $this->belongsToMany(Contato::class,'contatos_has_categorias','categoria_id','contato_id');
+    }
 }

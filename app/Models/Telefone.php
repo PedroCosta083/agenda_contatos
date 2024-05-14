@@ -9,4 +9,11 @@ class Telefone extends Model
 {
     protected $hidden = [];
     protected $appends = [];
+
+    public function contatoRelationship(){
+        return $this->belongsTo(Contato::class,'contato_id');
+    }
+    public function tipotelefoneRelationship(){
+        return $this->hasMany(TipoTelefone::class,'tipo_telefone_id');
+    }
 }
