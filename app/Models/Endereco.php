@@ -10,6 +10,6 @@ class Endereco extends Model
     protected $hidden = [];
     protected $appends = [];
     public function contatoRelationship(){
-        return $this->hasMany(Contato::class,'id');
+        return $this->hasOne(Contato::class,'contato_id');
     }
 }
