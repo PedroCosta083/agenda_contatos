@@ -14,5 +14,35 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // \App\Models\User::factory(10)->create();
+        $this->call(
+            array(
+                ContatoSeeder::class,
+            )
+        );
+        $this->call(
+            array(
+                EnderecoSeeder::class,
+            )
+        );
+        $this->call(
+            array(
+                TelefoneSeeder::class,
+            )
+        );
+        $this->call(
+            array(
+                TipoTelefoneSeeder::class,
+            )
+        );
+        $this->call(
+            array(
+                CategoriaSeeder::class,
+            )
+        );
+        $this->call(
+            array(
+                ContatoHasCategoriaSeeder::class,
+            )
+        );
     }
 }

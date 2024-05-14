@@ -19,6 +19,7 @@ class CreateEnderecosTable extends Migration
             $table->string('logradouro');
             $table->string('cidade');
             $table->string('numero');
+            $table->foreignId('contato_id')->constrained('contatos');
             $table->timestamps();
         });
     }
