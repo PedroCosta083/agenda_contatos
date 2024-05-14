@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateContatosTable extends Migration
+class CreateContatosHasCategoriasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateContatosTable extends Migration
      */
     public function up()
     {
-        Schema::create('contatos', function (Blueprint $table) {
-            $table->id();
-            $table->string('nome');
+        Schema::create('contatos_has_categorias', function (Blueprint $table) {
+            $table->foreignId('contato_id')->constrained('contatos');
+            $table->foreignId('categoria_id')->constrained('categoria');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ class CreateContatosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contatos');
+        Schema::dropIfExists('contatos_has_categorias');
     }
 }
