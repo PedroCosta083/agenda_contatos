@@ -15,7 +15,7 @@ class CreateContatosHasCategoriasTable extends Migration
     {
         Schema::create('contatos_has_categorias', function (Blueprint $table) {
             $table->foreignId('contato_id')->constrained('contatos');
-            $table->foreignId('categoria_id')->constrained('categoria');
+            $table->foreignId('categoria_id')->constrained('categorias');
             $table->timestamps();
         });
     }
