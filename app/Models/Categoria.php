@@ -6,11 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Categoria extends Model
 {
+    /**
+     * The attributes that should be hidden for arrays
+     *
+     * @var string
+     */
     protected $hidden = [];
+    /**
+     * The accessors to append to the model's array from.
+     *
+     * @var array
+     */
     protected $appends = [];
 
-    public function contatoRelationship()
-    {
-        return $this->belongsToMany(Contato::class, 'contatos_has_categorias', 'categoria_id', 'contato_id');
-    }
 }

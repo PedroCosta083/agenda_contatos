@@ -7,10 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Endereco extends Model
 {
+    /**
+     * The attributes that should be hidden for arrays
+     *
+     * @var string
+     */
     protected $hidden = [];
+    /**
+     * The accessors to append to the model's array from.
+     *
+     * @var array
+     */
     protected $appends = [];
-    public function contatoRelationship()
-    {
-        return $this->belongsTo(Contato::class, 'contato_id');
-    }
 }
