@@ -29,4 +29,22 @@ class Telefone extends Model
     {
         return $this->belongsTo(TipoTelefone::class, 'tipo_telefone_id');
     }
+    /**
+     * Get TipoTelefone attribute.
+     *
+     * @return string
+     */
+    public function getTipoTelefoneAttribute()
+    {
+        return $this->tipotelefoneRelationship;
+    }
+    /**
+     * Set the tipo_telefone's id.
+     *
+     * @return void
+     */
+    public function setTipoTelefoneAttribute($value)
+    {
+        $this->attributes['tipo_telefone_id'] = TipoTelefone::where('id', $value)->first()->id;
+    }
 }
