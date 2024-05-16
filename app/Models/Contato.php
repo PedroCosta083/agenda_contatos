@@ -71,7 +71,7 @@ class Contato extends Model
      */
     public function setTelefoneAttribute($value)
     {
-        $this->attributes['contato_id'] = Endereco::where('id', $value)->first()->id;
+        $this->attributes['contato_id'] = Telefone::where('id', $value)->first()->id;
     }
 
 
