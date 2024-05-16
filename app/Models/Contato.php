@@ -29,6 +29,15 @@ class Contato extends Model
         return $this->categoriaRelationship;
     }
     /**
+     * Set Categoria attribute.
+     *
+     * @return void
+     */
+    public function setCategoriaAttribute($value)
+    {
+        $this->categoriaRelationship()->sync($value);
+    }
+    /**
      * Get Endereco attribute.
      *
      * @return string
@@ -38,6 +47,15 @@ class Contato extends Model
         return $this->enderecoRelationship;
     }
     /**
+     * Set the endereco's id.
+     *
+     * @return void
+     */
+    public function setEnderecoAttribute($value)
+    {
+        $this->attributes['contato_id'] = Endereco::where('id', $value)->first()->id;
+    }
+    /**
      * Get Telefone attribute.
      *
      * @return string
@@ -45,6 +63,15 @@ class Contato extends Model
     public function getTelefoneAttribute()
     {
         return $this->telefoneRelationship;
+    }
+    /**
+     * Set the telefone's id.
+     *
+     * @return void
+     */
+    public function setTelefoneAttribute($value)
+    {
+        $this->attributes['contato_id'] = Endereco::where('id', $value)->first()->id;
     }
 
 
@@ -57,6 +84,8 @@ class Contato extends Model
     {
         return $this->belongsToMany(Categoria::class, 'contatos_has_categorias', 'contato_id', 'categoria_id');
     }
+
+
     /**
      * Get the Endereco that owns the contato.
      *
