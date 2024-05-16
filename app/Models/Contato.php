@@ -17,67 +17,48 @@ class Contato extends Model
      *
      * @var array
      */
-    protected $appends = [];
+    protected $appends = ['categoria', 'endereco', 'telefone'];
 
-    /**
-     * Get Categoria attribute.
-     *
+
+
+    /***** Getters ******/
+
+
+    /**   Get Categoria attribute.   *
      * @return string
      */
     public function getCategoriaAttribute()
     {
         return $this->categoriaRelationship;
     }
-    /**
-     * Set Categoria attribute.
-     *
-     * @return void
-     */
-    public function setCategoriaAttribute($value)
-    {
-        $this->categoriaRelationship()->sync($value);
-    }
-    /**
-     * Get Endereco attribute.
-     *
+
+    /**   Get Endereco attribute.     *
      * @return string
      */
     public function getEnderecoAttribute()
     {
         return $this->enderecoRelationship;
     }
-    /**
-     * Set the endereco's id.
-     *
-     * @return void
-     */
-    public function setEnderecoAttribute($value)
-    {
-        $this->attributes['contato_id'] = Endereco::where('id', $value)->first()->id;
-    }
-    /**
-     * Get Telefone attribute.
-     *
+
+    /** Get Telefone attribute.    *
      * @return string
      */
+
     public function getTelefoneAttribute()
     {
         return $this->telefoneRelationship;
     }
-    /**
-     * Set the telefone's id.
-     *
-     * @return void
-     */
-    public function setTelefoneAttribute($value)
+
+    /***** Setters ******/
+
+    public function setCategoriaAttribute($value)
     {
-        $this->attributes['contato_id'] = Telefone::where('id', $value)->first()->id;
+        $this->categoriaRelationship()->sync($value);
     }
 
+    /***** Relationships ******/
 
-    /**
-     * Get the Categoria that belong to the contato.
-     *
+    /** Get the Categoria that belong to the contato.   *
      * @return Categoria
      */
     public function categoriaRelationship()
@@ -86,18 +67,14 @@ class Contato extends Model
     }
 
 
-    /**
-     * Get the Endereco that owns the contato.
-     *
+    /** Get the Endereco that owns the contato.     *
      * @return Endereco
      */
     public function enderecoRelationship()
     {
         return $this->hasOne(Endereco::class, 'contato_id');
     }
-    /**
-     * Get the Telefone that belong to the contato.
-     *
+    /** Get the Telefone that belong to the contato.   *
      * @return Telefone
      */
     public function telefoneRelationship()

@@ -18,17 +18,12 @@ class Telefone extends Model
      *
      * @var array
      */
-    protected $appends = [];
+    protected $appends = ['tipotelefone'];
 
-    /**
-     * Get the TipoTelefone that owns the telefone.
-     *
-     * @return TipoTelefone
-     */
-    public function tipotelefoneRelationship()
-    {
-        return $this->belongsTo(TipoTelefone::class, 'tipo_telefone_id');
-    }
+
+
+    /*****  Getters *****/
+
     /**
      * Get TipoTelefone attribute.
      *
@@ -38,13 +33,41 @@ class Telefone extends Model
     {
         return $this->tipotelefoneRelationship;
     }
-    /**
-     * Set the tipo_telefone's id.
-     *
+
+
+
+    /*****  Setters *****/
+
+    /** Set the telefones's id.     *
      * @return void
      */
+    public function setContatoAttribute($value)
+    {
+        if (isset($value)) {
+            $this->attributes['contato_id'] = Contato::where('id', $value)->first()->id;
+        }
+    }
+
     public function setTipoTelefoneAttribute($value)
     {
-        $this->attributes['tipo_telefone_id'] = TipoTelefone::where('id', $value)->first()->id;
+        if (isset($value)) {
+            $this->attributes['tipo_telefone_id'] = TipoTelefone::where('id', $value)->first()->id;
+        }
+
     }
+
+    /*****  Relationships *****/
+
+
+    /**
+     * Get the TipoTelefone that owns the telefone.
+     *
+     * @return TipoTelefone
+     */
+
+    public function tipotelefoneRelationship()
+    {
+        return $this->belongsTo(TipoTelefone::class, 'tipo_telefone_id');
+    }
+
 }

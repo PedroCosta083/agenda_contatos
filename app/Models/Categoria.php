@@ -18,5 +18,4 @@ class Categoria extends Model
      * @var array
      */
     protected $appends = [];
-
 }

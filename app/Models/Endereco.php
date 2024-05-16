@@ -19,4 +19,18 @@ class Endereco extends Model
      * @var array
      */
     protected $appends = [];
+
+
+    /*****  Setters *****/
+
+
+    /** Set the endereco's id.     *
+     * @return void
+     */
+    public function setContatoAttribute($value)
+    {
+        if (isset($value)) {
+            $this->attributes['contato_id'] = Contato::where('id', $value)->first()->id;
+        }
+    }
 }
