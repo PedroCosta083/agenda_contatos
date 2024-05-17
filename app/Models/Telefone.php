@@ -12,7 +12,7 @@ class Telefone extends Model
      *
      * @var string
      */
-    protected $hidden = [];
+    protected $hidden = ['tipotelefoneRelationship', 'created_at', 'updated_at'];
     /**
      * The accessors to append to the model's array from.
      *
@@ -67,7 +67,7 @@ class Telefone extends Model
 
     public function tipotelefoneRelationship()
     {
-        return $this->belongsTo(TipoTelefone::class, 'tipo_telefone_id');
+        return $this->belongsTo(TipoTelefone::class, 'tipos_telefone_id');
     }
 
 }
