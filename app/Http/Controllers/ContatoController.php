@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 use App\Models\Contato;
+use App\Models\Endereco;
+use App\Models\Telefone;
 
 class ContatoController extends Controller
 {
@@ -13,6 +15,8 @@ class ContatoController extends Controller
     {
         $this->contatos = $contatos;
         $this->categorias = Categoria::all();
+        $this->enderecos = Endereco::all();
+        $this->telefones = Telefone::all();
     }
 
     /**
@@ -34,7 +38,9 @@ class ContatoController extends Controller
     public function create()
     {
         $categorias = $this->categorias;
-        return view('');
+        $enderecos = $this->enderecos;
+        $telefones = $this->telefones;
+        return view('contato_create', compact('categorias', 'telefones', 'enderecos'));
     }
 
     /**

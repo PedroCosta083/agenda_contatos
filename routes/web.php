@@ -14,10 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
 
 Route::get('contato', [ContatoController::class, 'index'])->name('contato.index');
-Route::get('contato.create', [ContatoController::class, 'create'])->name('contato.create');
-Route::get('contato.update', [ContatoController::class, 'update'])->name('contato.update');
+Route::get('contato/create', [ContatoController::class, 'create'])->name('contato_create');
+Route::get('contato/store', [ContatoController::class, 'store'])->name('contato_store');
+Route::get('contato/update', [ContatoController::class, 'update'])->name('contato_update');

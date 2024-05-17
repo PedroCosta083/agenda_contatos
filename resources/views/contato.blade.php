@@ -9,7 +9,9 @@
 </head>
 
 <body>
-    {{ $contatos }}
+    @foreach ($contatos as $contatos)
+        {{ $contatos->telefone }}
+    @endforeach
 </body>
 
 </html>
