@@ -20,4 +20,6 @@ class TipoTelefone extends Model
      */
     protected $appends = [];
 
+    protected $table = 'tipos_telefones';
+
 }

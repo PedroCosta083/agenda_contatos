@@ -67,7 +67,7 @@ class Telefone extends Model
 
     public function tipotelefoneRelationship()
     {
-        return $this->belongsTo(TipoTelefone::class, 'tipos_telefone_id');
+        return $this->belongsTo(TipoTelefone::class, 'tipo_telefone_id');
     }
 
 }

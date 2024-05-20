@@ -7,16 +7,17 @@ use Illuminate\Http\Request;
 use App\Models\Contato;
 use App\Models\Endereco;
 use App\Models\Telefone;
+use App\Models\TipoTelefone;
 
 class ContatoController extends Controller
 {
-
     public function __construct(Contato $contatos)
     {
         $this->contatos = $contatos;
-        $this->categorias = Categoria::all();
-        $this->enderecos = Endereco::all();
-        $this->telefones = Telefone::all();
+        $this->categorias = Categoria::all()->pluck('titulo', 'id');
+        $this->enderecos = new Endereco;
+        $this->telefones = new Telefone;
+        $this->tipos_telefones = TipoTelefone::all()->pluck('titulo', 'id');
     }
 
     /**
@@ -35,8 +36,9 @@ class ContatoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
+        dd($request);
         $categorias = $this->categorias;
         $enderecos = $this->enderecos;
         $telefones = $this->telefones;
@@ -51,7 +53,38 @@ class ContatoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $contato = $this->contatos->create([
+            'nome' => $request->nome,
+        ]);
+        $contato_id = $contato->id;
+        $this->enderecos->create([
+            'logadouro' => $request->logadouro,
+            'numero' => $request->numero,
+            'cidade' => $request->cidade,
+            'contato_id' => $contato_id,
+        ]);
+
+        for ($i = 0; $i < count($request->telefone); $i++) {
+            $this->telefones->create([
+                'numero' => $request->telefone[$i],
+                'contato_id' => $contato_id,
+                'tipo_telefone_id' => $request->tipotelefone[$i],
+            ]);
+        }
+        /*
+          foreach ($request->telefones as $telefone_data) {
+            $this->telefones->create([
+                'contato_id' => $contato_id,
+                'numero' => $telefone_data['numero'],
+                'tipo_telefone_id' => 0,
+            ]);
+        }
+        */
+
+
+        $contato->categoria()->attach($request->categorias);
+
     }
 
     /**
