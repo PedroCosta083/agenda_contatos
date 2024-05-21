@@ -20,6 +20,8 @@ class Endereco extends Model
      */
     protected $appends = [];
 
+    protected $fillable = ['cep', 'logradouro', 'cidade', 'numero', 'contato_id'];
+
 
     /*****  Setters *****/
 

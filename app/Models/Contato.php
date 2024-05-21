@@ -19,6 +19,8 @@ class Contato extends Model
      */
     protected $appends = ['categoria', 'endereco', 'telefone'];
 
+    protected $fillable = ["nome"];
+
 
 
     /***** Getters ******/

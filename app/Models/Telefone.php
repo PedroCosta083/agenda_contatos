@@ -20,7 +20,7 @@ class Telefone extends Model
      */
     protected $appends = ['tipotelefone'];
 
-
+    protected $fillable = ['numero', 'contato_id', 'tipo_telefone_id'];
 
     /*****  Getters *****/
 

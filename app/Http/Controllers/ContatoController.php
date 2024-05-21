@@ -28,7 +28,7 @@ class ContatoController extends Controller
     public function index()
     {
         $contatos = $this->contatos->all();
-        return view('contato', compact('contatos'));
+        return view('contato.index', compact('contatos'));
     }
 
     /**
@@ -36,13 +36,12 @@ class ContatoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create()
     {
-        dd($request);
         $categorias = $this->categorias;
         $enderecos = $this->enderecos;
         $telefones = $this->telefones;
-        return view('contato_create', compact('categorias', 'telefones', 'enderecos'));
+        return view('contato.form', compact('categorias', 'telefones', 'enderecos'));
     }
 
     /**
@@ -53,15 +52,16 @@ class ContatoController extends Controller
      */
     public function store(Request $request)
     {
-
         $contato = $this->contatos->create([
             'nome' => $request->nome,
         ]);
+
         $contato_id = $contato->id;
         $this->enderecos->create([
-            'logadouro' => $request->logadouro,
+            'logradouro' => $request->logradouro,
             'numero' => $request->numero,
             'cidade' => $request->cidade,
+            'cep' => $request->cep,
             'contato_id' => $contato_id,
         ]);
 
@@ -72,19 +72,11 @@ class ContatoController extends Controller
                 'tipo_telefone_id' => $request->tipotelefone[$i],
             ]);
         }
-        /*
-          foreach ($request->telefones as $telefone_data) {
-            $this->telefones->create([
-                'contato_id' => $contato_id,
-                'numero' => $telefone_data['numero'],
-                'tipo_telefone_id' => 0,
-            ]);
+        for ($i = 0; $i < count($request->categoria); $i++) {
+            $contato->categoriaRelationship()->attach($request->categorias[$i]);
         }
-        */
 
-
-        $contato->categoria()->attach($request->categorias);
-
+        return redirect()->route('contato.index');
     }
 
     /**
@@ -95,7 +87,11 @@ class ContatoController extends Controller
      */
     public function show($id)
     {
-        //
+        $form = 'disabled';
+        $contato = $this->contatos->find($id);
+        $categorias = $this->categorias;
+        $tipos_telefones = $this->tipo_telefone;
+        return view('contato.form', compact('categorias', 'tipo_telefone', 'form', 'contato'));
     }
 
     /**
@@ -106,7 +102,11 @@ class ContatoController extends Controller
      */
     public function edit($id)
     {
-        //
+        $contato = $this->contatos->find($id);
+        $categorias = $this->categorias;
+        $tipos_telefones = $this->tipos_telefones;
+
+        return view('contato.form', compact('categorias', 'tipos_telefones', 'contato'));
     }
 
     /**
@@ -118,7 +118,18 @@ class ContatoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $contato = $this->contatos->find($id);
+        $contato->update([
+            'nome' => $request->nome,
+            // de forma usual poderiamos utilizar apenas tap($contato->endereco,update({...}))
+            tap($this->enderecos->find($contato->endereco->id))->update([
+                'logradouro' => $request->logradouro,
+                'numero' => $request->numero,
+                'cidade' => $request->cidade,
+                'cep' => $request->cep,
+                'contato_id' => $request->$id,
+            ])
+        ]);
     }
 
     /**
@@ -129,6 +140,11 @@ class ContatoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $contato = $this->contatos->find($id);
+        $contato->telefone->delete();
+        $contato->endereco->delete();
+        $contato->categoria->delete();
+        $contato->delete();
+        return redirect()->route('contato.index');
     }
 }
