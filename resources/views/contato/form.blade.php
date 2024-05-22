@@ -9,30 +9,37 @@
     <style>
         .container {
             display: flex;
-            align-content: center;
-            justify-content: space-around;
-            align-items: center;
             flex-direction: column;
+            gap: 15px;
+        }
+
+        .container-checkbox {
+            display: grid;
+            grid-template-columns: repeat(7, 3fr);
         }
     </style>
-
 </head>
 
 <body>
-    <form action="{{ route('contato.store') }}" method="POST">
-        @csrf
-        <div class="container">
 
+    <form action="{{ isset($contato) ? route('contato.update', $contato->id) : route('contato.store') }}"
+        method="{{ isset($contato) ? 'PUT' : 'POST' }}">
+        @csrf
+
+        <div class="container">
             <div>
                 <label for="nome">Nome</label>
-                <input name='nome' id='nome' type="text">
+                <input value="{{ $contato->nome ?? '' }}" name='nome' id='nome' type="text"
+                    {{ $form ?? null }}>
             </div>
-
-            <div>
-                <label for="telefoneInput">Número de Telefone:</label>
-                <input type="text" id="telefoneInput" placeholder="Digite o número de telefone">
-                <button type="button" onclick="adicionarTelefone()">Adicionar</button>
-            </div>
+            @if (!isset($form))
+                <div>
+                    <label for="telefoneInput">Número de Telefone:</label>
+                    <input type="text" id="telefoneInput" placeholder="Digite o número de telefone"
+                        {{ $form ?? null }}>
+                    <button type="button" onclick="adicionarTelefone()">Adicionar</button>
+                </div>
+            @endif
             <table id="tabelaTelefones">
                 <thead>
                     <tr>
@@ -40,83 +47,89 @@
                         <th>Tipo</th>
                         <th>Excluir</th>
                     </tr>
+
                 </thead>
                 <tbody id="tbodyTelefones">
-
+                    @foreach ($contato->telefone ?? [] as $telefone)
+                        <tr>
+                            <td>{{ $telefone->numero }}</td>
+                            <td>{{ $telefone->tipotelefone->titulo }}</td>
+                            <td><button type="button" onclick="excluirTelefone(this)">Excluir</button></td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
-
-
-            @foreach ($categorias as $categoria)
-                <input type="checkbox" name="categoria[]" value="{{ $categoria }}">{{ $categoria }}</input>
-            @endforeach
-
-
-
+            @isset($form)
+                <div class="container-checkbox">
+                    @foreach ($categorias as $key => $categoria)
+                        <input type="checkbox" name="categoria[]" value="{{ $key }}">{{ $categoria }}</input>
+                    @endforeach
+                </div>
+            @endisset
+            <div class="container-checkbox">
+                @foreach ($contato->categoria ?? [] as $categoria)
+                    <input type="checkbox" name="categoria[]" value="{{ $categoria->id }}"
+                        {{ $form ?? null }}>{{ $categoria->titulo }}</input>
+                @endforeach
+            </div>
             <div>
                 <label for="logradouro">Logradouro</label>
-                <input name='logradouro' required id='logradouro' type="text">
+                <input value="{{ $contato->endereco->logradouro ?? '' }}" name='logradouro' required id='logradouro'
+                    type="text" {{ $form ?? null }}>
             </div>
             <div>
                 <label for="ncasa">N° Casa</label>
-                <input name='numero' required id ='numero' type="text">
+                <input value="{{ $contato->endereco->numero ?? '' }}" name='numero' required id ='numero'
+                    type="text" {{ $form ?? null }}>
             </div>
             <div>
                 <label for="cidade">Cidade</label>
-                <input name='cidade'required id='cidade' type="text">
+                <input value="{{ $contato->endereco->cidade ?? '' }}" name='cidade' required id='cidade'
+                    type="text" {{ $form ?? null }}>
             </div>
             <div>
                 <label for="cep">Cep</label>
-                <input name='cep' required id='cep' type="text">
+                <input value="{{ $contato->endereco->cep ?? '' }}" name='cep' required id='cep'
+                    type="text" {{ $form ?? null }}>
             </div>
-            <div>
-                <input type="submit">
-            </div>
+            @if (!isset($form))
+                <div>
+                    <input type="submit">
+                </div>
+            @endif
+            @isset($form)
+                <div>
+                    <button>Editar</button>
+                </div>
+            @endisset
         </div>
     </form>
-
-    <script type="text/javascript">
+    <script>
         function adicionarTelefone() {
-            console.log("foi");
-            var telefone = document.getElementById("telefoneInput");
-            if (telefone.value.trim() !== "") {
+            var telefoneInput = document.getElementById("telefoneInput");
+            var telefone = telefoneInput.value.trim();
+            if (telefone) {
                 var newRow = document.createElement("tr");
-                var cellTelefone = document.createElement("td");
-                var inputTelefoneTable = document.createElement("input");
-                inputTelefoneTable.value = telefone.value;
-                inputTelefoneTable.name = "telefone[]";
-                cellTelefone.appendChild(inputTelefoneTable);
-                var cellSelect = document.createElement("td");
-                var select = document.createElement("select");
-                select.name = "tipotelefone[]";
-                var option1 = document.createElement("option");
-                option1.text = "Celular";
-                option1.value = "1";
-                var option2 = document.createElement("option");
-                option2.text = "Fixo";
-                option2.value = "2";
-                select.appendChild(option1);
-                select.appendChild(option2);
-                cellSelect.appendChild(select);
-                var cellExcluir = document.createElement("td");
-                var botaoExcluir = document.createElement("button");
-                botaoExcluir.textContent = "Excluir";
-                botaoExcluir.onclick = function() {
-                    var row = this.parentNode.parentNode;
-                    row.parentNode.removeChild(row);
-                };
-                cellExcluir.appendChild(botaoExcluir);
-
-                newRow.appendChild(cellTelefone);
-                newRow.appendChild(cellSelect);
-                newRow.appendChild(cellExcluir);
-
+                newRow.innerHTML = `
+                    <td><input type="text" name="telefone[]" value="${telefone}" {{ $form ?? null }}></td>
+                    <td>
+                        <select name="tipotelefone[]" {{ $form ?? null }}>
+                            <option value="1">Celular</option>
+                            <option value="2">Fixo</option>
+                        </select>
+                    </td>
+                    <td><button type="button" onclick="excluirTelefone(this)">Excluir</button></td>
+                `;
                 document.getElementById("tbodyTelefones").appendChild(newRow);
-
-                document.getElementById("telefoneInput").value = "";
+                telefoneInput.value = "";
             } else {
                 alert("Por favor, insira um número de telefone.");
             }
+        }
+
+        function excluirTelefone(button) {
+            var row = button.closest("tr");
+            row.remove();
         }
     </script>
 </body>

@@ -40,8 +40,7 @@ class ContatoController extends Controller
     {
         $categorias = $this->categorias;
         $enderecos = $this->enderecos;
-        $telefones = $this->telefones;
-        return view('contato.form', compact('categorias', 'telefones', 'enderecos'));
+        return view('contato.form', compact('categorias', 'enderecos'));
     }
 
     /**
@@ -72,8 +71,9 @@ class ContatoController extends Controller
                 'tipo_telefone_id' => $request->tipotelefone[$i],
             ]);
         }
+
         for ($i = 0; $i < count($request->categoria); $i++) {
-            $contato->categoriaRelationship()->attach($request->categorias[$i]);
+            $contato->categoriaRelationship()->attach($request->categoria[$i]);
         }
 
         return redirect()->route('contato.index');
@@ -90,8 +90,8 @@ class ContatoController extends Controller
         $form = 'disabled';
         $contato = $this->contatos->find($id);
         $categorias = $this->categorias;
-        $tipos_telefones = $this->tipo_telefone;
-        return view('contato.form', compact('categorias', 'tipo_telefone', 'form', 'contato'));
+        $tipos_telefones = $this->tipos_telefones;
+        return view('contato.form', compact('categorias', 'tipos_telefones', 'form', 'contato'));
     }
 
     /**
@@ -130,6 +130,8 @@ class ContatoController extends Controller
                 'contato_id' => $request->$id,
             ])
         ]);
+
+        return redirect()->route('contato.show')->with('id', $id);
     }
 
     /**
@@ -141,9 +143,9 @@ class ContatoController extends Controller
     public function destroy($id)
     {
         $contato = $this->contatos->find($id);
-        $contato->telefone->delete();
-        $contato->endereco->delete();
-        $contato->categoria->delete();
+        $contato->categoriaRelationship()->detach();
+        $contato->enderecoRelationship()->delete();
+        $contato->telefoneRelationship()->delete();
         $contato->delete();
         return redirect()->route('contato.index');
     }

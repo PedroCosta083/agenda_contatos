@@ -8,6 +8,12 @@
     <title>Laravel</title>
 
     <style>
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10;
+        }
+
         .card {
             border: 1px solid #ccc;
             border-radius: 5px;
