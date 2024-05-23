@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Adicionar Contato</title>
+    <title>{{ isset($contato) ? 'Editar Contato' : 'Adicionar Contato' }}</title>
     <style>
         .container {
             display: flex;
             flex-direction: column;
+            align-items: flex-start;
             gap: 15px;
         }
 
@@ -21,99 +22,124 @@
 </head>
 
 <body>
+    @if (isset($contato))
+        <form action="{{ route('contato.update', $contato->id) }}" method="PUT">
+            @method('PUT')
+        @else
+            <form action="{{ route('contato.store') }}" method="POST'">
+    @endif
+    @csrf
 
-    <form action="{{ isset($contato) ? route('contato.update', $contato->id) : route('contato.store') }}"
-        method="{{ isset($contato) ? 'PUT' : 'POST' }}">
-        @csrf
 
-        <div class="container">
+
+    <div class="container">
+        <div>
+            <label for="nome">Nome</label>
+            <input value="{{ $contato->nome ?? '' }}" name='nome' id='nome' type="text" required>
+        </div>
+
+        @unless (isset($form))
             <div>
-                <label for="nome">Nome</label>
-                <input value="{{ $contato->nome ?? '' }}" name='nome' id='nome' type="text"
-                    {{ $form ?? null }}>
+                <label for="telefoneInput">Número de Telefone:</label>
+                <input type="number" id="telefoneInput" placeholder="Digite o número de telefone">
+                <button type="button" onclick="adicionarTelefone()">Adicionar</button>
             </div>
-            @if (!isset($form))
-                <div>
-                    <label for="telefoneInput">Número de Telefone:</label>
-                    <input type="text" id="telefoneInput" placeholder="Digite o número de telefone"
-                        {{ $form ?? null }}>
-                    <button type="button" onclick="adicionarTelefone()">Adicionar</button>
-                </div>
-            @endif
-            <table id="tabelaTelefones">
-                <thead>
-                    <tr>
-                        <th>Número de Telefone</th>
-                        <th>Tipo</th>
-                        <th>Excluir</th>
-                    </tr>
+        @endunless
 
-                </thead>
-                <tbody id="tbodyTelefones">
-                    @foreach ($contato->telefone ?? [] as $telefone)
+        <table id="tabelaContatos">
+            <thead>
+                <tr>
+                    <th>Número de Telefone</th>
+                    <th>Tipo</th>
+                    <th>Excluir</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyTelefones">
+                @isset($contato->telefone)
+                    @foreach ($contato->telefone as $telefone)
                         <tr>
-                            <td>{{ $telefone->numero }}</td>
-                            <td>{{ $telefone->tipotelefone->titulo }}</td>
+                            <td><input type="number" name="telefone[]" value="{{ $telefone->numero }}" required></td>
+                            <td>
+                                <select name="tipotelefone[]" required>
+                                    <option value="1" {{ $telefone->tipotelefone->id == 1 ? 'selected' : '' }}>
+                                        Celular</option>
+                                    <option value="2" {{ $telefone->tipotelefone->id == 2 ? 'selected' : '' }}>Fixo
+                                    </option>
+                                </select>
+                            </td>
                             <td><button type="button" onclick="excluirTelefone(this)">Excluir</button></td>
                         </tr>
                     @endforeach
-                </tbody>
-            </table>
-            @isset($form)
-                <div class="container-checkbox">
-                    @foreach ($categorias as $key => $categoria)
-                        <input type="checkbox" name="categoria[]" value="{{ $key }}">{{ $categoria }}</input>
-                    @endforeach
-                </div>
-            @endisset
-            <div class="container-checkbox">
-                @foreach ($contato->categoria ?? [] as $categoria)
-                    <input type="checkbox" name="categoria[]" value="{{ $categoria->id }}"
-                        {{ $form ?? null }}>{{ $categoria->titulo }}</input>
-                @endforeach
-            </div>
-            <div>
-                <label for="logradouro">Logradouro</label>
-                <input value="{{ $contato->endereco->logradouro ?? '' }}" name='logradouro' required id='logradouro'
-                    type="text" {{ $form ?? null }}>
-            </div>
-            <div>
-                <label for="ncasa">N° Casa</label>
-                <input value="{{ $contato->endereco->numero ?? '' }}" name='numero' required id ='numero'
-                    type="text" {{ $form ?? null }}>
-            </div>
-            <div>
-                <label for="cidade">Cidade</label>
-                <input value="{{ $contato->endereco->cidade ?? '' }}" name='cidade' required id='cidade'
-                    type="text" {{ $form ?? null }}>
-            </div>
-            <div>
-                <label for="cep">Cep</label>
-                <input value="{{ $contato->endereco->cep ?? '' }}" name='cep' required id='cep'
-                    type="text" {{ $form ?? null }}>
-            </div>
-            @if (!isset($form))
-                <div>
-                    <input type="submit">
-                </div>
-            @endif
-            @isset($form)
-                <div>
-                    <button>Editar</button>
-                </div>
-            @endisset
+                @endisset
+            </tbody>
+        </table>
+
+        <div class="container-checkbox">
+            @foreach ($categorias as $key => $categoria)
+                <input type="checkbox" name="categoria[]" value="{{ $key }}"
+                    {{ $checked = (isset($contato->categoria) ? $contato->categoria->contains($key) : false) ? 'checked' : '' }}
+                    {{ isset($form) ? 'disabled' : '' }}>{{ $categoria }}
+            @endforeach
         </div>
+
+
+
+        <div>
+            <label for="logradouro">Logradouro</label>
+            <input value="{{ $contato->endereco->logradouro ?? '' }}" name='logradouro' id='logradouro' type="text"
+                required>
+        </div>
+        <div>
+            <label for="ncasa">N° Casa</label>
+            <input value="{{ $contato->endereco->numero ?? '' }}" name='numero' id ='numero' type="text"
+                required>
+        </div>
+        <div>
+            <label for="cidade">Cidade</label>
+            <input value="{{ $contato->endereco->cidade ?? '' }}" name='cidade' id='cidade' type="text"
+                required>
+        </div>
+        <div>
+            <label for="cep">Cep</label>
+            <input value="{{ $contato->endereco->cep ?? '' }}" name='cep' id='cep' type="text" required>
+        </div>
+
+        @unless (isset($form))
+            <div>
+                <button type="submit">Enviar</button>
+            </div>
+        @else
+            <div>
+                <a href="{{ route('contato.edit', $contato->id) }}">Editar</a>
+            </div>
+        @endunless
+
+        @if (Route::currentRouteName() == 'contato.edit')
+            @method('PUT')
+            <div>
+                <a href="{{ route('contato.show', $contato->id) }}">Voltar</a>
+            </div>
+        @endif
+    </div>
     </form>
+    @isset($contato)
+        <form action="{{ route('contato.destroy', [$contato->id]) }}" method="POST">
+            @csrf
+            @method('delete')
+            <button type="submit">Excluir</button>
+        </form>
+    @endisset
     <script>
         function adicionarTelefone() {
             var telefoneInput = document.getElementById("telefoneInput");
             var telefone = telefoneInput.value.trim();
-            if (telefone) {
+
+            if (telefone != '' && !verificarNumero(telefone)) {
                 var newRow = document.createElement("tr");
                 newRow.innerHTML = `
-                    <td><input type="text" name="telefone[]" value="${telefone}" {{ $form ?? null }}></td>
+                    <td><input type="number" name="telefone[]" value="${telefone}" required></td>
                     <td>
-                        <select name="tipotelefone[]" {{ $form ?? null }}>
+                        <select name="tipotelefone[]" required>
                             <option value="1">Celular</option>
                             <option value="2">Fixo</option>
                         </select>
@@ -123,8 +149,21 @@
                 document.getElementById("tbodyTelefones").appendChild(newRow);
                 telefoneInput.value = "";
             } else {
-                alert("Por favor, insira um número de telefone.");
+                alert("Por favor, insira um número de telefone");
             }
+        }
+
+
+        function verificarNumero(numero) {
+            var tabela = document.getElementById("tabelaContatos");
+            var inputs = tabela.querySelectorAll("input[name='telefone[]']");
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].value.trim() === numero.trim()) {
+                    alert('O número já existe.');
+                    return true;
+                }
+            }
+            return false;
         }
 
         function excluirTelefone(button) {
@@ -132,6 +171,8 @@
             row.remove();
         }
     </script>
+
+
 </body>
 
 </html>

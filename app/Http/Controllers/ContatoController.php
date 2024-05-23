@@ -75,7 +75,6 @@ class ContatoController extends Controller
         for ($i = 0; $i < count($request->categoria); $i++) {
             $contato->categoriaRelationship()->attach($request->categoria[$i]);
         }
-
         return redirect()->route('contato.index');
     }
 
@@ -116,23 +115,40 @@ class ContatoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
     public function update(Request $request, $id)
     {
         $contato = $this->contatos->find($id);
+
         $contato->update([
             'nome' => $request->nome,
-            // de forma usual poderiamos utilizar apenas tap($contato->endereco,update({...}))
-            tap($this->enderecos->find($contato->endereco->id))->update([
-                'logradouro' => $request->logradouro,
-                'numero' => $request->numero,
-                'cidade' => $request->cidade,
-                'cep' => $request->cep,
-                'contato_id' => $request->$id,
-            ])
         ]);
 
+        $endereco = $this->enderecos->find($contato->endereco->id);
+        $endereco->update([
+            'logradouro' => $request->logradouro,
+            'numero' => $request->numero,
+            'cidade' => $request->cidade,
+            'cep' => $request->cep,
+            'contato_id' => $id,
+        ]);
+        $telefones = $contato->telefone;
+        dd($telefones);
+
+
+        for ($i = 0; $i < count($telefones); $i++) {
+            if ($this->telefones->find($contato->telefone[$i]->id)) {
+                print ('dento');
+            }
+            $telefones[$i]->update([
+                'numero' => $request->telefone[$i],
+                'tipo_telefone_id' => $request->tipotelefone[$i],
+                'contato_id' => $id
+            ]);
+        }
         return redirect()->route('contato.show')->with('id', $id);
     }
+
 
     /**
      * Remove the specified resource from storage.
