@@ -18,31 +18,36 @@
             display: grid;
             grid-template-columns: repeat(7, 3fr);
         }
+
+        .buttons {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
     </style>
 </head>
 
 <body>
     @if (isset($contato))
-        <form action="{{ route('contato.update', $contato->id) }}" method="PUT">
-            @method('PUT')
+        <form action="{{ route('contato.update', [$contato->id]) }}" method="POST">
+            @method('put')
         @else
-            <form action="{{ route('contato.store') }}" method="POST'">
+            <form action="{{ route('contato.store') }}" method="POST">
     @endif
     @csrf
-
-
-
     <div class="container">
         <div>
             <label for="nome">Nome</label>
-            <input value="{{ $contato->nome ?? '' }}" name='nome' id='nome' type="text" required>
+            <input {{ isset($form) ? $form : null }} value="{{ $contato->nome ?? '' }}" name='nome' id='nome'
+                type="text" required>
         </div>
 
         @unless (isset($form))
             <div>
                 <label for="telefoneInput">Número de Telefone:</label>
-                <input type="number" id="telefoneInput" placeholder="Digite o número de telefone">
-                <button type="button" onclick="adicionarTelefone()">Adicionar</button>
+                <input {{ isset($form) ? $form : null }} type="number" id="telefoneInput"
+                    placeholder="Digite o número de telefone">
+                <button {{ isset($form) ? $form : null }} type="button" onclick="adicionarTelefone()">Adicionar</button>
             </div>
         @endunless
 
@@ -58,16 +63,19 @@
                 @isset($contato->telefone)
                     @foreach ($contato->telefone as $telefone)
                         <tr>
-                            <td><input type="number" name="telefone[]" value="{{ $telefone->numero }}" required></td>
+                            <td><input {{ isset($form) ? $form : null }} type="number" name="telefone[]"
+                                    value="{{ $telefone->numero }}" required></td>
                             <td>
-                                <select name="tipotelefone[]" required>
+                                <select {{ isset($form) ? $form : null }} name="tipotelefone[]" required>
                                     <option value="1" {{ $telefone->tipotelefone->id == 1 ? 'selected' : '' }}>
                                         Celular</option>
-                                    <option value="2" {{ $telefone->tipotelefone->id == 2 ? 'selected' : '' }}>Fixo
+                                    <option value="2" {{ $telefone->tipotelefone->id == 2 ? 'selected' : '' }}>
+                                        Fixo
                                     </option>
                                 </select>
                             </td>
-                            <td><button type="button" onclick="excluirTelefone(this)">Excluir</button></td>
+                            <td><button {{ isset($form) ? $form : null }} type="button"
+                                    onclick="excluirTelefone(this)">Excluir</button></td>
                         </tr>
                     @endforeach
                 @endisset
@@ -86,51 +94,60 @@
 
         <div>
             <label for="logradouro">Logradouro</label>
-            <input value="{{ $contato->endereco->logradouro ?? '' }}" name='logradouro' id='logradouro' type="text"
-                required>
+            <input {{ isset($form) ? $form : null }} value="{{ $contato->endereco->logradouro ?? '' }}"
+                name='logradouro' id='logradouro' type="text" required>
         </div>
         <div>
             <label for="ncasa">N° Casa</label>
-            <input value="{{ $contato->endereco->numero ?? '' }}" name='numero' id ='numero' type="text"
-                required>
+            <input {{ isset($form) ? $form : null }} value="{{ $contato->endereco->numero ?? '' }}" name='numero'
+                id ='numero' type="text" required>
         </div>
         <div>
             <label for="cidade">Cidade</label>
-            <input value="{{ $contato->endereco->cidade ?? '' }}" name='cidade' id='cidade' type="text"
-                required>
+            <input {{ isset($form) ? $form : null }} value="{{ $contato->endereco->cidade ?? '' }}" name='cidade'
+                id='cidade' type="text" required>
         </div>
         <div>
             <label for="cep">Cep</label>
-            <input value="{{ $contato->endereco->cep ?? '' }}" name='cep' id='cep' type="text" required>
+            <input {{ isset($form) ? $form : null }} value="{{ $contato->endereco->cep ?? '' }}" name='cep'
+                id='cep' type="text" required>
+        </div>
+        <div class="buttons">
+            <div>
+                <button type="submit" {{ isset($form) ? $form : null }}>Enviar</button>
+            </div>
+            @if (isset($form))
+                <div>
+                    <a href="{{ isset($contato) ? route('contato.edit', $contato->id) : null }}">Editar</a>
+                </div>
+            @endif
+            @if (Route::currentRouteName() == 'contato.edit')
+                <div>
+                    <a href="{{ isset($contato) ? route('contato.show', $contato->id) : null }}"
+                        {{ isset($form) ? $form : null }}>Voltar</a>
+                </div>
+            @endif
         </div>
 
-        @unless (isset($form))
-            <div>
-                <button type="submit">Enviar</button>
-            </div>
-        @else
-            <div>
-                <a href="{{ route('contato.edit', $contato->id) }}">Editar</a>
-            </div>
-        @endunless
-
-        @if (Route::currentRouteName() == 'contato.edit')
-            @method('PUT')
-            <div>
-                <a href="{{ route('contato.show', $contato->id) }}">Voltar</a>
-            </div>
-        @endif
     </div>
     </form>
+
     @isset($contato)
-        <form action="{{ route('contato.destroy', [$contato->id]) }}" method="POST">
+        <form action="{{ isset($contato) ? route('contato.destroy', [$contato->id]) : null }}" method="POST">
             @csrf
             @method('delete')
-            <button type="submit">Excluir</button>
+            <button {{ isset($form) ? $form : null }} type="submit">Excluir</button>
         </form>
     @endisset
     <script>
         function adicionarTelefone() {
+            var tabela = document.getElementById("tbodyTelefones");
+            var rowCount = tabela.rows.length;
+
+            if (rowCount >= 2) {
+                alert("Você já adicionou o número máximo de telefones.");
+                return;
+            }
             var telefoneInput = document.getElementById("telefoneInput");
             var telefone = telefoneInput.value.trim();
 

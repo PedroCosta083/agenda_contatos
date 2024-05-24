@@ -119,7 +119,6 @@ class ContatoController extends Controller
     public function update(Request $request, $id)
     {
         $contato = $this->contatos->find($id);
-
         $contato->update([
             'nome' => $request->nome,
         ]);
@@ -132,21 +131,23 @@ class ContatoController extends Controller
             'cep' => $request->cep,
             'contato_id' => $id,
         ]);
-        $telefones = $contato->telefone;
-        dd($telefones);
-
-
-        for ($i = 0; $i < count($telefones); $i++) {
-            if ($this->telefones->find($contato->telefone[$i]->id)) {
-                print ('dento');
+        for ($i = 0; $i < count($request->telefone); $i++) {
+            if (isset($contato->telefone[$i])) {
+                $contato->telefone[$i]->update([
+                    'numero' => $request->telefone[$i],
+                    'tipo_telefone_id' => $request->tipotelefone[$i],
+                    'contato_id' => $id
+                ]);
+            } else {
+                $this->telefones->create([
+                    'numero' => $request->telefone[$i],
+                    'tipo_telefone_id' => $request->tipotelefone[$i],
+                    'contato_id' => $id
+                ]);
             }
-            $telefones[$i]->update([
-                'numero' => $request->telefone[$i],
-                'tipo_telefone_id' => $request->tipotelefone[$i],
-                'contato_id' => $id
-            ]);
         }
-        return redirect()->route('contato.show')->with('id', $id);
+        $contato->categoriaRelationship()->sync($request->categoria);
+        return redirect()->route('contato.show', [$id]);
     }
 
 
