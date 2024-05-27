@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-
 Route::get('contato', [ContatoController::class, 'index'])->name('contato.index');
 Route::get('contato/create', [ContatoController::class, 'create'])->name('contato.create');
 Route::post('contato/store', [ContatoController::class, 'store'])->name('contato.store');

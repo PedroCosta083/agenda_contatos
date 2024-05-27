@@ -1,3 +1,1 @@
-require("./bootstrap");
-console.log("foi");
-
+import './bootstrap';
