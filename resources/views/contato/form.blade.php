@@ -131,8 +131,7 @@
                 <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                     href="{{ isset($contato) ? route('contato.edit', $contato->id) : null }}">Editar</a>
             @endif
-            <a class="bg-blue-500 hover text-white font-bold py-2 px-4 rounded"
-                href="{{ isset($contato) ? route('contato.index') : null }}"
+            <a class="bg-blue-500 hover text-white font-bold py-2 px-4 rounded" href="{{ route('contato.index') }}"
                 {{ isset($form) ? $form : null }}>Voltar</a>
 
         </div>
