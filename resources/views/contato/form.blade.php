@@ -62,15 +62,20 @@
                                 <select {{ isset($form) ? $form : '' }}
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     name="tipotelefone[]" required>
-                                    <option value="1" {{ $telefone->tipotelefone->id == 1 ? 'selected' : '' }}>Celular
-                                    </option>
-                                    <option value="2" {{ $telefone->tipotelefone->id == 2 ? 'selected' : '' }}>Fixo
-                                    </option>
+                                    @foreach ($tipos_telefones as $key => $tipoTelefone)
+                                        <option value="{{ $key }}"
+                                            {{ $telefone->tipotelefone->id == $key ? 'selected' : '' }}>
+                                            {{ $tipoTelefone }}
+                                        </option>
+                                    @endforeach
+
                                 </select>
                             </td>
-                            <td><button {{ isset($form) ? $form : '' }}
-                                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                                    type="button" onclick="excluirTelefone(this)">Excluir</button></td>
+                            <td>
+                                <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                    type="button"
+                                    onclick="excluirTelefone({{ isset($form) ? null . ',' : $telefone->id . ',' }} this)">Excluir</button>
+                            </td>
                         </tr>
                     @endforeach
                 @endisset
@@ -133,14 +138,16 @@
         </div>
         </form>
         @if (isset($contato))
-            <form action="{{ isset($contato) ? route('contato.destroy', [$contato->id]) : null }}" method="POST">
-                @csrf
-                @method('delete')
-                <button class="bg-red-500 hover text-white font-bold py-2 px-4 rounded" type="submit"
-                    {{ isset($form) ? $form : null }}>Excluir Contato</button>
+            <button class="bg-red-500 hover text-white font-bold py-2 px-4 rounded" type="submit"
+                {{ isset($form) ? $form : null }}>Excluir Contato</button>
             </form>
         @endif
+        <form id = "formExcluirTelefone" action = "" method = "POST" style = "display: none;">
+            @csrf
+            @method('DELETE')
+        </form>
     </div>
+
     <script>
         function adicionarTelefone() {
             var tabela = document.getElementById("tbodyTelefones");
@@ -161,7 +168,7 @@
                     <option value="2">Fixo</option>
                 </select>
             </td>
-            <td><button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" type="button" onclick="excluirTelefone(this)">Excluir</button></td>
+            <td><button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" type="button" onclick="excluirTelefone(${null},this)">Excluir</button></td>
         `;
                 document.getElementById("tbodyTelefones").appendChild(newRow);
                 telefoneInput.value = "";
@@ -183,9 +190,19 @@
             return false;
         }
 
-        function excluirTelefone(button) {
-            var row = button.closest("tr");
-            row.remove();
+        function excluirTelefone(id, object) {
+            console.log('id', id)
+            console.log('object', object)
+            if (id != null) {
+                if (confirm("Tem certeza de que deseja excluir este telefone?")) {
+                    document.getElementById("formExcluirTelefone").action = "{{ route('telefone.destroy', ':id') }}"
+                        .replace(':id', id);
+                    document.getElementById("formExcluirTelefone").submit();
+                }
+            } else {
+                var row = object.closest("tr");
+                row.remove();
+            }
         }
     </script>
 

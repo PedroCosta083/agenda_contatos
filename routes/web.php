@@ -21,3 +21,4 @@ Route::get('contato/show/{id}', [ContatoController::class, 'show'])->name('conta
 Route::get('contato/edit/{id}', [ContatoController::class, 'edit'])->name('contato.edit');
 Route::put('contato/update/{id}', [ContatoController::class, 'update'])->name('contato.update');
 Route::delete('contato/destroy/{id}', [ContatoController::class, 'destroy'])->name('contato.destroy');
+Route::delete('telefone/destroy/{id}',[ContatoController::class,'excluirTelefone'])->name('telefone.destroy');

@@ -166,4 +166,14 @@ class ContatoController extends Controller
         $contato->delete();
         return redirect()->route('contato.index');
     }
+    public function excluirTelefone($id)
+    {
+        $telefone = $this->telefones->find($id);
+
+        if (!$telefone) {
+            return response()->ms(['message' => 'Telefone não encontrado.'], 404);
+        }
+        $telefone->delete();
+    }
+
 }
