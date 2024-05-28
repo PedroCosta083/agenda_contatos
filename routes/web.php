@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContatoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('contatos', [ContatoController::class, 'index'])->name('contato.index');
+Route::get('contato/create', [ContatoController::class, 'create'])->name('contato.create');
+Route::post('contatos/store', [ContatoController::class, 'store'])->name('contato.store');
+Route::get('contato/show/{id}', [ContatoController::class, 'show'])->name('contato.show');
+Route::get('contato/edit/{id}', [ContatoController::class, 'edit'])->name('contato.edit');
+Route::put('contatos/update/{id}', [ContatoController::class, 'update'])->name('contato.update');
+Route::delete('contato/destroy/{id}', [ContatoController::class, 'destroy'])->name('contato.destroy');
+Route::delete('telefone/destroy/{id}',[ContatoController::class,'excluirTelefone'])->name('telefone.destroy');
