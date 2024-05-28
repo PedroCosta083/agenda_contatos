@@ -12,7 +12,7 @@ class Telefone extends Model
      *
      * @var string
      */
-    protected $hidden = [];
+    protected $hidden = ['tipotelefoneRelationship', 'created_at', 'updated_at'];
     /**
      * The accessors to append to the model's array from.
      *
@@ -20,7 +20,7 @@ class Telefone extends Model
      */
     protected $appends = ['tipotelefone'];
 
-
+    protected $fillable = ['numero', 'contato_id', 'tipo_telefone_id'];
 
     /*****  Getters *****/
 

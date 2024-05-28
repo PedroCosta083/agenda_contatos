@@ -11,7 +11,7 @@ class Categoria extends Model
      *
      * @var string
      */
-    protected $hidden = [];
+    protected $hidden = ['created_at', 'updated_at'];
     /**
      * The accessors to append to the model's array from.
      *

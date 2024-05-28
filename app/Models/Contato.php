@@ -11,13 +11,15 @@ class Contato extends Model
      *
      * @var string
      */
-    protected $hidden = [];
+    protected $hidden = ['categoriaRelationship', 'enderecoRelationship', 'telefoneRelationship', 'created_at', 'updated_at'];
     /**
      * The accessors to append to the model's array from.
      *
      * @var array
      */
-    protected $appends = [];
+    protected $appends = ['categoria', 'endereco', 'telefone'];
+
+    protected $fillable = ["nome"];
 
 
 

@@ -12,13 +12,15 @@ class Endereco extends Model
      *
      * @var string
      */
-    protected $hidden = [];
+    protected $hidden = ['created_at', 'updated_at'];
     /**
      * The accessors to append to the model's array from.
      *
      * @var array
      */
     protected $appends = [];
+
+    protected $fillable = ['cep', 'logradouro', 'cidade', 'numero', 'contato_id'];
 
 
     /*****  Setters *****/
