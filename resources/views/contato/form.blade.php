@@ -138,8 +138,11 @@
         </div>
         </form>
         @if (isset($contato))
-            <button class="bg-red-500 hover text-white font-bold py-2 px-4 rounded" type="submit"
-                {{ isset($form) ? $form : null }}>Excluir Contato</button>
+            <form action="{{ route('contato.destroy', [$contato->id]) }}" method="POST">
+                @csrf
+                @method('delete')
+                <button class="bg-red-500 hover text-white font-bold py-2 px-4 rounded" type="submit"
+                    {{ isset($form) ? $form : null }}>Excluir Contato</button>
             </form>
         @endif
         <form id = "formExcluirTelefone" action = "" method = "POST" style = "display: none;">
