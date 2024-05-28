@@ -169,11 +169,11 @@ class ContatoController extends Controller
     public function excluirTelefone($id)
     {
         $telefone = $this->telefones->find($id);
-
         if (!$telefone) {
             return response()->ms(['message' => 'Telefone não encontrado.'], 404);
         }
         $telefone->delete();
+        return redirect()->route('contato.edit', [$telefone->contato_id]);
     }
 
 }
