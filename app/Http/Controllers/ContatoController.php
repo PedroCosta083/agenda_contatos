@@ -39,8 +39,8 @@ class ContatoController extends Controller
     public function create()
     {
         $categorias = $this->categorias;
-        $enderecos = $this->enderecos;
-        return view('contato.form', compact('categorias', 'enderecos'));
+        $tipos_telefones = $this->tipos_telefones;
+        return view('contato.form', compact('categorias', 'tipos_telefones'));
     }
 
     /**
@@ -72,9 +72,9 @@ class ContatoController extends Controller
             ]);
         }
 
-        for ($i = 0; $i < count($request->categoria); $i++) {
-            $contato->categoriaRelationship()->attach($request->categoria[$i]);
-        }
+
+        $contato->categoriaRelationship()->attach($request->categoria);
+
         return redirect()->route('contato.index');
     }
 

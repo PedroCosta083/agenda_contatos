@@ -167,8 +167,9 @@
             <td><input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" name="telefone[]" value="${telefone}" required></td>
             <td>
                 <select class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="tipotelefone[]" required>
-                    <option value="1">Celular</option>
-                    <option value="2">Fixo</option>
+                    @foreach ($tipos_telefones as $key => $tipoTelefone)
+                        <option value="{{ $key }}"> {{ $tipoTelefone }}</option>
+                    @endforeach
                 </select>
             </td>
             <td><button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" type="button" onclick="excluirTelefone(${null},this)">Excluir</button></td>
